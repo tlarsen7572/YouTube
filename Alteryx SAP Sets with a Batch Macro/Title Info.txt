@@ -1,0 +1,8 @@
+Alteryx SAP Sets with a Batch Macro
+
+Do you need to identify postings made to a plant’s cost centers?  Or adjustments made to revenue accounts?  Oftentimes this custom hierarchical information is stored in SAP sets.  This video shows you how to leverage the power of Alteryx to easily tag your data with set membership details.
+
+Download the finished workflows here:
+https://github.com/tlarsen7572/YouTube/blob/master/Alteryx%20SAP%20Sets%20with%20a%20Batch%20Macro/Workflows.zip
+
+SAP,Alteryx,Batch Macro,Sets
