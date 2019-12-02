@@ -1,236 +1,236 @@
-0:00:00.000,0:00:00.000
+0:00:01.000,0:00:07.000
 >> TOM: Hey welcome, let's talk about how we can use a batch macro to add set names to SAP data
 
-0:00:00.000,0:00:00.000
+0:00:07.000,0:00:18.000
 We have 3 tables we are going to be using: The SETLEAF table in SAP defines set membership using a series of operators such as equals, between, contains patterns
 
-0:00:00.000,0:00:00.000
+0:00:18.000,0:00:26.000
 The value from, the value to fields, and then a field here that identifies whether its an inclusion vs an exclusion filter
 
-0:00:00.000,0:00:00.000
+0:00:26.000,0:00:27.000
 We'll talk a little more about that a little bit later
 
-0:00:00.000,0:00:00.000
+0:00:27.000,0:00:33.000
 The SETHEADER table just tells us what field the set operates on
 
-0:00:00.000,0:00:00.000
+0:00:33.000,0:00:41.000
 and we have some transaction data from FAGLFLEXA and we want to identify which sets these transactions belong to
 
-0:00:00.000,0:00:00.000
+0:00:41.000,0:00:51.000
 Our first step is going to be to combine the SETLEAF and the SETHEADER tables using the key of the set, which is the client (MANDT), SETCLASS, SUBCLASS, and SETNAME fields
 
-0:00:00.000,0:00:00.000
+0:00:51.000,0:00:55.000
 Let's get rid of the extra fields from the right hand table
 
-0:00:00.000,0:00:00.000
+0:00:55.000,0:01:02.000
 And what we're looking for here is SETLEAF with that FIELDNAME field added to the end, as you can see here
 
-0:00:00.000,0:00:00.000
+0:01:02.000,0:01:13.000
 Now that we have this, what we want to do is turn the SETLEAF data into Alteryx formula expressions, something that we can use in a filter tool
 
-0:00:00.000,0:00:00.000
+0:01:13.000,0:01:18.000
 Now I've already taken the liberty of creating a macro ahead of time that does this
 
-0:00:00.000,0:00:00.000
-There are different ways and different methodooigies you can use to put this together
+0:01:18.000,0:01:23.000
+There are different ways and different methodologies you can use to put this together
 
-0:00:00.000,0:00:00.000
+0:01:23.000,0:01:39.000
 What it really does at the end of the day is, it uses a bunch of IF statements, really, to build a string, a text field, that will do the filtering using the values in the SETLEAF table
 
-0:00:00.000,0:00:00.000
+0:01:39.000,0:01:55.000
 In the first record here you can see we have an equals operator so this set is looking for records that are equal to 'A1' and we built a filter expression in Alteryx to identify that, that would work in a filter tool
 
-0:00:00.000,0:00:00.000
+0:01:55.000,0:02:04.000
 So we've done that for equals, for, you can see some of the betweens.  The tricky one in particular can be the pattern operators, the contains pattern, does not contain pattern
 
-0:00:00.000,0:00:00.000
+0:02:04.000,0:02:08.000
 We turn those into regular expressions
 
-0:00:00.000,0:00:00.000
-Now that we're here what we want to do is we want to split the data stream into the inclusion records, and then a separate data stream for the exclusionary records
+0:02:08.000,0:02:16.000
+Now that we're here what we want to do is we want to split our data stream into the inclusion records, and then a separate data stream for the exclusionary records
 
-0:00:00.000,0:00:00.000
+0:02:16.000,0:02:25.000
 What SAP does here is when it's doing set operations it first uses all of the inclusion filters to select the population of records
 
-0:00:00.000,0:00:00.000
+0:02:25.000,0:02:32.000
 Once it's done that it takes all the exclusion records and it filters records out of that population using those.
 
-0:00:00.000,0:00:00.000
+0:02:32.000,0:02:37.000
 So we're going to do something somewhat similar in Alteryx here
 
-0:00:00.000,0:00:00.000
+0:02:37.000,0:02:44.000
 We're going to do it all in a formula expression, but we need to split them out into different data streams
 
-0:00:00.000,0:00:00.000
+0:02:44.000,0:02:56.000
 And we're going to do that just by doing a simple filter here, the value sign equals I, so the inclusion records will go up the true anchor and the exclusion will go through the false anchor
 
-0:00:00.000,0:00:00.000
+0:02:56.000,0:03:03.000
 what we want to end up with is 1 record per set that has a formula that completely describes that set
 
-0:00:00.000,0:00:00.000
+0:03:03.000,0:03:07.000
 and to do that we are going to use the summarize tool here
 
-0:00:00.000,0:00:00.000
+0:03:07.000,0:03:15.000
 We're going to throw summarize on both the inclusion and the exclusion records and we're going to start by grouping down to our set
 
-0:00:00.000,0:00:00.000
-And what we're going to do to the filter is a little fun thing, made me really happy when I disocvered it (makes me happy every time I do it)
+0:03:15.000,0:03:23.000
+And what we're going to do with the filter is a little fun thing, made me really happy when I discovered it (makes me happy every time I do it)
 
-0:00:00.000,0:00:00.000
+0:03:23.000,0:03:25.000
 Easily amused, I guess
 
-0:00:00.000,0:00:00.000
+0:03:25.000,0:03:27.000
 We're going to concatenate the filter
 
-0:00:00.000,0:00:00.000
+0:03:27.000,0:03:29.000
 It's really cool the summarize lets you do this
 
-0:00:00.000,0:00:00.000
+0:03:29.000,0:03:34.000
 Now when you're doing an inclusionary filter you want to concatenate using OR logic
 
-0:00:00.000,0:00:00.000
+0:03:34.000,0:03:40.000
 Because you want, for example, an account equal to 'A' or 'B' or 'C'
 
-0:00:00.000,0:00:00.000
+0:03:40.000,0:03:55.000
 The exclusion is going to go through a very similar process here where we're going to group by the same key of the set but instead of concatenating on OR logic we are going to concatenate using AND logic
 
-0:00:00.000,0:00:00.000
+0:03:55.000,0:04:01.000
 We don't want 'D', we don't want 'E', and we don't want 'F'
 
-0:00:00.000,0:00:00.000
+0:04:01.000,0:04:08.000
 We're going to put those stream back together in a union tool and we're going to error out if the fields are different
 
-0:00:00.000,0:00:00.000
+0:04:08.000,0:04:14.000
 They should be the same and this will give us an early warning if they're not
 
-0:00:00.000,0:00:00.000
+0:04:14.000,0:04:20.000
 And then once we put them back together we're going to do one last summarize to get that 1 record per set
 
-0:00:00.000,0:00:00.000
+0:04:20.000,0:04:29.000
 And the concatenation we're going to use on this is going to be again, an AND concatenation
 
-0:00:00.000,0:00:00.000
+0:04:29.000,0:04:33.000
 We want all these records and we don't want these records
 
-0:00:00.000,0:00:00.000
+0:04:33.000,0:04:47.000
 So when we run this again what we should end up with is 1 record per set with a filter expression that completely describes that set in SAP using logic that Alteryx can understand in an filter tool
 
-0:00:00.000,0:00:00.000
+0:04:47.000,0:04:56.000
 And now that we're here we can build a batch macro to leverage this filter expression and tag our information with a set name
 
-0:00:00.000,0:00:00.000
+0:04:56.000,0:04:58.000
 So let's go and do that
 
-0:00:00.000,0:00:00.000
+0:04:58.000,0:05:02.000
 The batch macro, the first thing we are going to do is, I'm going to copy over the FAGLFLEXA data
 
-0:00:00.000,0:00:00.000
+0:05:02.000,0:05:09.000
 This is going to be in the input to the batch macro, and we are going to convert it right away to a macro input
 
-0:00:00.000,0:00:00.000
+0:05:09.000,0:05:12.000
 The next thing we need are control parameters
 
-0:00:00.000,0:00:00.000
-The first control parameter is going to contain the actual filter erxpression and this will be used in a filter to get down to our set records
+0:05:12.000,0:05:21.000
+The first control parameter is going to contain the actual filter expression and this will be used in a filter to get down to our set records
 
-0:00:00.000,0:00:00.000
+0:05:21.000,0:05:24.000
 We want one more control parameter
 
-0:00:00.000,0:00:00.000
+0:05:24.000,0:05:30.000
 This control parameter will be to tag the data with the set name here
 
-0:00:00.000,0:00:00.000
-Now before we go any further let's give those two parmeters some default values so we can do some testing
+0:05:30.000,0:05:38.000
+Now before we go any further let's give those two parameters some default values so we can do some testing
 
-0:00:00.000,0:00:00.000
+0:05:38.000,0:05:41.000
 And then we're going to do 'TEST1' as the set name
 
-0:00:00.000,0:00:00.000
+0:05:41.000,0:05:47.000
 So we're looking for RACCT equals 'A1' and we're going to call it TEST1 as the set name
 
-0:00:00.000,0:00:00.000
+0:05:47.000,0:05:50.000
 The batch macro is really simple
 
-0:00:00.000,0:00:00.000
+0:05:50.000,0:06:01.000
 It is going to be literally a filter expression, a filter tool rather, which is going to be the control parameter with the filter
 
-0:00:00.000,0:00:00.000
+0:06:01.000,0:06:05.000
 Let's change the annotation here, I don't like messy anotations
 
-0:00:00.000,0:00:00.000
+0:06:05.000,0:06:08.000
 And it's going to be followed by a formula tool
 
-0:00:00.000,0:00:00.000
+0:06:08.000,0:06:13.000
 And the formula tool is going to be adding the set name to our data
 
-0:00:00.000,0:00:00.000
-And it's going to look very similar to what we did with our filter except it's going to be bringing in the set name
+0:06:13.000,0:06:18.000
+And it's going to look very similar to what we did with the filter except it's going to be bringing in the set name
 
-0:00:00.000,0:00:00.000
+0:06:18.000,0:06:21.000
 And it's going to be doing it in a string field
 
-0:00:00.000,0:00:00.000
+0:06:21.000,0:06:24.000
 And again I'm going to change the annotion
 
-0:00:00.000,0:00:00.000
+0:06:24.000,0:06:26.000
 And then we're going to spit the data right out
 
-0:00:00.000,0:00:00.000
+0:06:26.000,0:06:30.000
 Very simple batch macro here
 
-0:00:00.000,0:00:00.000
+0:06:30.000,0:06:40.000
 And as we do a test here you should see that our 11 records get filtered down to 1 record which is the 1 record that matches our filter expression and our data gets the set name addded to it
 
-0:00:00.000,0:00:00.000
+0:06:40.000,0:06:43.000
 And this is all we need for this batch macro, so we're going to save this
 
-0:00:00.000,0:00:00.000
+0:06:43.000,0:06:46.000
 Save it something that makes sense to you
 
-0:00:00.000,0:00:00.000
+0:06:46.000,0:06:50.000
 Tag with Sets makes sense to me
 
-0:00:00.000,0:00:00.000
+0:06:50.000,0:06:54.000
 And let's add it to our workflow here
 
-0:00:00.000,0:00:00.000
-Now the input going into the control parameters is going to be the filter expressions that we've calculated in the last summarize tool up here
+0:06:56.000,0:07:06.000
+Now the input going into the control parameters is going to be the filter expressions that we've calculated in this last summarize tool up here
 
-0:00:00.000,0:00:00.000
+0:07:06.000,0:07:09.000
 FAGLFELXA is going to go into our data input
 
-0:00:00.000,0:00:00.000
+0:07:09.000,0:07:18.000
 And every time that we have a new record from the summarize tool come in it's going to filter FAGLFLEXA for that filter expression and tag with the set name
 
-0:00:00.000,0:00:00.000
+0:07:18.000,0:07:23.000
 Let's make sure that we've set the control parameters properly
 
-0:00:00.000,0:00:00.000
+0:07:23.000,0:07:27.000
 They did automatically set for us, very convenient
 
-0:00:00.000,0:00:00.000
+0:07:27.000,0:07:30.000
 Now we'll run it and we'll see if this actually works here
 
-0:00:00.000,0:00:00.000
+0:07:30.000,0:07:39.000
 So what we've ended up with now, is all of our transaction data and we have it tagged with the set that it belongs to
 
-0:00:00.000,0:00:00.000
+0:07:39.000,0:07:44.000
 You'll notice that we started out with 11 records here and we ended up with 39 records
 
-0:00:00.000,0:00:00.000
+0:07:44.000,0:07:46.000
 And that's to be expected
 
-0:00:00.000,0:00:00.000
+0:07:46.000,0:07:50.000
 Transactions or data in SAP can belong to more than 1 set
 
-0:00:00.000,0:00:00.000
+0:07:50.000,0:07:58.000
 In FAGLFLEXA for example you can have a transaction belong to Revenue and belong to Stockholders' Equity because they go to different financial statements
 
-0:00:00.000,0:00:00.000
+0:07:58.000,0:08:02.000
 So it's not unexpected that you would have more records than you started with
 
-0:00:00.000,0:00:00.000
+0:08:02.000,0:08:10.000
 And there you go, a quick and easy way to use a batch macro in Alteryx to add set information to your SAP data
 
-0:00:00.000,0:00:00.000
+0:08:10.000,0:08:12.000
 Thanks for watching
